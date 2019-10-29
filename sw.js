@@ -14,6 +14,17 @@ self.addEventListener('install', function(event) {
   //     ]);
   //   })
   // );
+  console.log('sw is installed');
+});
+
+self.addEventListener('activate', function (event) {
+  // Safary don't support clients.claim()
+  try {
+    event.waitUntil(self.clients.claim());
+  // eslint-disable-next-line no-empty
+  } catch (err) {
+  }
+  console.log('sw is activated');
 });
 
 self.addEventListener('fetch', function(event) {
@@ -25,8 +36,10 @@ self.addEventListener('fetch', function(event) {
     // caches.match() always resolves
     // but in case of success response will have value
     if (response !== undefined) {
+      console.log('sw: from cache');
       return response;
     } else {
+      console.log('sw: fetch');
       return fetch(event.request).then(function (response) {
         // response may be used only once
         // we need to save clone to put one copy in cache
