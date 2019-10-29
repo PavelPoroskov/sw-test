@@ -28,18 +28,17 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function(event) {
-  console.log('sw-fetch: begin');
-  console.log(event.request.url);
+  console.log(`request ${event.request.url}`);
   // TODO filter for /galery
 
   event.respondWith(caches.match(event.request).then(function(response) {
     // caches.match() always resolves
     // but in case of success response will have value
     if (response !== undefined) {
-      console.log('sw: from cache');
+      console.log(`cache ${event.request.url}`);
       return response;
     } else {
-      console.log('sw: fetch');
+      console.log('fetch try: event.request.url');
       return fetch(event.request).then(function (response) {
         // response may be used only once
         // we need to save clone to put one copy in cache
