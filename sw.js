@@ -30,6 +30,7 @@ self.addEventListener('activate', function (event) {
 self.addEventListener('fetch', function(event) {
   const urlsForCacheRegExp = new RegExp('/gallery/', 'g');
 
+  console.log(`request befor filter ${event.request.url}`);
   if (!urlsForCacheRegExp.test(event.request.url)) {
     return false;
   }
