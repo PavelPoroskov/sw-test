@@ -27,7 +27,7 @@ self.addEventListener('activate', function (event) {
   console.log('sw is activated');
 });
 
-let firstCachedImage;
+// let firstCachedImage;
 
 self.addEventListener('fetch', function(event) {
   const urlsForCacheRegExp = new RegExp('/gallery/', 'g');
@@ -43,10 +43,19 @@ self.addEventListener('fetch', function(event) {
     // but in case of success response will have value
     if (response !== undefined) {
       console.log(`cache ${event.request.url}`);
-      if (firstCachedImage) {
-        return caches.match(firstCachedImage);
-      }
-      return response;
+      // if (firstCachedImage) {
+      //   console.log(`retrun replacement for ${event.request.url}`);
+      //   return caches.match(firstCachedImage);
+      // }
+
+      // return response;
+      const replacement = event.request.url
+        .split('/')
+        .slice(0,-2)
+        .concat('gallery/bountyHunters.jpg')
+        .join('/');
+      
+      return caches.match(replacement);
     } else {
       console.log(`fetch try: ${event.request.url}`);
       return fetch(event.request).then(function (response) {
@@ -58,7 +67,7 @@ self.addEventListener('fetch', function(event) {
         caches.open('v1').then(function (cache) {
           cache.put(event.request, responseClone);
         });
-        firstCachedImage = event.request.url;
+        // firstCachedImage = event.request.url;
         return response;
       }).catch(function () {
         return caches.match('gallery/myLittleVader.jpg');
