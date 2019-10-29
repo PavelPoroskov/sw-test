@@ -43,7 +43,7 @@ self.addEventListener('fetch', function(event) {
       console.log(`cache ${event.request.url}`);
       return response;
     } else {
-      console.log('fetch try: event.request.url');
+      console.log(`fetch try: ${event.request.url}`);
       return fetch(event.request).then(function (response) {
         // response may be used only once
         // we need to save clone to put one copy in cache
