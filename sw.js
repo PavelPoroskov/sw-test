@@ -28,8 +28,13 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function(event) {
+  const urlsForCacheRegExp = new RegExp('/gallery/', 'g');
+
+  if (!urlsForCacheRegExp.test(event.request.url)) {
+    return false;
+  }
+
   console.log(`request ${event.request.url}`);
-  // TODO filter for /galery
 
   event.respondWith(caches.match(event.request).then(function(response) {
     // caches.match() always resolves
