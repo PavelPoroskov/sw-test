@@ -5,17 +5,29 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(function(reg) {
 
     if(reg.installing) {
-      console.log('Service worker installing');
+      console.log('navigator.serviceWorker.register: Service worker installing');
     } else if(reg.waiting) {
-      console.log('Service worker installed');
+      console.log('navigator.serviceWorker.register: Service worker installed');
     } else if(reg.active) {
-      console.log('Service worker active');
+      console.log('navigator.serviceWorker.register: Service worker active');
     }
 
   }).catch(function(error) {
     // registration failed
     console.log('Registration failed with ' + error);
   });
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.ready
+  .then(function(registration) {
+    console.log('navigator.serviceWorker.ready: A service worker is active:', registration.active);
+
+    // At this point, you can call methods that require an active
+    // service worker, like registration.pushManager.subscribe()
+  });
+} else {
+  console.log('Service workers are not supported.');
 }
 
 // // function for loading each image via XHR
