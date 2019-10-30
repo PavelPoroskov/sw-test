@@ -14,7 +14,7 @@ self.addEventListener('install', function(event) {
       ]);
     })
   );
-  console.log('sw is installed');
+  console.log('from SW/install: is installed');
 });
 
 self.addEventListener('activate', function (event) {
@@ -24,7 +24,7 @@ self.addEventListener('activate', function (event) {
   // eslint-disable-next-line no-empty
   } catch (err) {
   }
-  console.log('sw is activated');
+  console.log('from SW/activate: is activated');
 });
 
 // self.addEventListener('fetch', function(event) {

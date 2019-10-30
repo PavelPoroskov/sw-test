@@ -4,30 +4,47 @@ if ('serviceWorker' in navigator) {
   // navigator.serviceWorker.register('/sw-test/sw.js', { scope: '/sw-test/' }).then(function(reg) {
   navigator.serviceWorker.register('./sw.js').then(function(reg) {
 
+    let serviceWorker;
     if(reg.installing) {
+      serviceWorker = reg.installing;
       console.log('navigator.serviceWorker.register: Service worker installing');
     } else if(reg.waiting) {
+      serviceWorker = reg.waiting;
       console.log('navigator.serviceWorker.register: Service worker installed');
     } else if(reg.active) {
+      serviceWorker = reg.active;
+      //33
       console.log('navigator.serviceWorker.register: Service worker active');
     }
-
+    if (serviceWorker) {
+      // logState(serviceWorker.state);
+      serviceWorker.addEventListener('statechange', function (e) {
+          logState('serviceWorker statechange'  +e.target.state);
+      });
+    }
   }).catch(function(error) {
     // registration failed
     console.log('Registration failed with ' + error);
   });
-}
 
-if ('serviceWorker' in navigator) {
   navigator.serviceWorker.ready
   .then(function(registration) {
+    //33
     console.log('navigator.serviceWorker.ready: A service worker is active:', registration.active);
 
     // At this point, you can call methods that require an active
     // service worker, like registration.pushManager.subscribe()
   });
-} else {
-  console.log('Service workers are not supported.');
+
+  if (navigator.serviceWorker.controller) {
+    console.log('This page is currently controlled by:', navigator.serviceWorker.controller);
+  }
+
+  // Then, register a handler to detect when a new or
+  // updated service worker takes control.
+  navigator.serviceWorker.oncontrollerchange = function() {
+    console.log('This page is now controlled by:', navigator.serviceWorker.controller);
+  };
 }
 
 // // function for loading each image via XHR
