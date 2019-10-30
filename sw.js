@@ -27,6 +27,64 @@ self.addEventListener('activate', function (event) {
   console.log('sw is activated');
 });
 
+// self.addEventListener('fetch', function(event) {
+//   const urlsForCacheRegExp = new RegExp('/gallery/', 'g');
+
+//   if (!urlsForCacheRegExp.test(event.request.url)) {
+//     return false;
+//   }
+
+//   console.log(`request ${event.request.url}`);
+
+//   const replacement = event.request.url
+//   .split('/')
+//   .slice(0,-2)
+//   .concat('gallery/myLittleVader.jpg')
+//   .join('/');
+
+//   event.respondWith(caches.match(event.request).then(function(response) {
+//     // caches.match() always resolves
+//     // but in case of success response will have value
+//     if (response !== undefined) {
+//       console.log(`cache ${event.request.url}`);
+
+//       return caches.match(replacement)
+//         .then(function (responseReplacement) {
+//           if (!responseReplacement) {
+//             console.log('have cache, but not have replacement');
+//           }
+//           return responseReplacement || response;
+//         });
+//     } else {
+//       console.log(`fetch try: ${event.request.url}`);
+//       return fetch(event.request).then(function (response) {
+//         // response may be used only once
+//         // we need to save clone to put one copy in cache
+//         // and serve second one
+//         let responseClone = response.clone();
+        
+//         caches.open('v1').then(function (cache) {
+//           cache.put(event.request, responseClone);
+//         });
+
+//         // return response;
+//         return caches.match(replacement)
+//         .then(function (responseReplacement) {
+//           if (!responseReplacement) {
+//             console.log('have fetched, but not have replacement');
+//           }
+//           return responseReplacement || response;
+//         });
+//       });
+//       // .catch(function () {
+//       //   return caches.match('gallery/myLittleVader.jpg');
+//       // });
+//     }
+//   }));
+// });
+
+var CACHE = 'v22';
+
 self.addEventListener('fetch', function(event) {
   const urlsForCacheRegExp = new RegExp('/gallery/', 'g');
 
@@ -42,43 +100,40 @@ self.addEventListener('fetch', function(event) {
   .concat('gallery/myLittleVader.jpg')
   .join('/');
 
-  event.respondWith(caches.match(event.request).then(function(response) {
-    // caches.match() always resolves
-    // but in case of success response will have value
-    if (response !== undefined) {
-      console.log(`cache ${event.request.url}`);
+  event.respondWith(caches.open(CACHE).then(function(cache) {
+    return cache.match(event.request).then(function(response) {
+      // caches.match() always resolves
+      // but in case of success response will have value
+      if (response !== undefined) {
+        console.log(`cache ${event.request.url}`);
 
-      return caches.match(replacement)
-        .then(function (responseReplacement) {
+        return caches.match(replacement).then(function (responseReplacement) {
           if (!responseReplacement) {
             console.log('have cache, but not have replacement');
           }
           return responseReplacement || response;
         });
-    } else {
-      console.log(`fetch try: ${event.request.url}`);
-      return fetch(event.request).then(function (response) {
-        // response may be used only once
-        // we need to save clone to put one copy in cache
-        // and serve second one
-        let responseClone = response.clone();
-        
-        caches.open('v1').then(function (cache) {
-          cache.put(event.request, responseClone);
-        });
+      } else {
+        console.log(`fetch try: ${event.request.url}`);
+        return fetch(event.request).then(function (response) {
+          // response may be used only once
+          // we need to save clone to put one copy in cache
+          // and serve second one
+          let responseClone = response.clone();
+          
+          caches.open('v1').then(function (cache) {
+            cache.put(event.request, responseClone);
+          });
 
-        // return response;
-        return caches.match(replacement)
-        .then(function (responseReplacement) {
-          if (!responseReplacement) {
-            console.log('have fetched, but not have replacement');
-          }
-          return responseReplacement || response;
+          // return response;
+          return caches.match(replacement).then(function (responseReplacement) {
+            if (!responseReplacement) {
+              console.log('have fetched, but not have replacement');
+            }
+            return responseReplacement || response;
+          });
         });
-      });
-      // .catch(function () {
-      //   return caches.match('gallery/myLittleVader.jpg');
-      // });
-    }
-  }));
-});
+      }
+    })
+  }))
+})
