@@ -1,19 +1,19 @@
 self.addEventListener('install', function(event) {
-  // event.waitUntil(
-  //   caches.open('v1').then(function(cache) {
-  //     return cache.addAll([
-  //       '/sw-test/',
-  //       '/sw-test/index.html',
-  //       '/sw-test/style.css',
-  //       '/sw-test/app.js',
-  //       '/sw-test/image-list.js',
-  //       '/sw-test/star-wars-logo.jpg',
-  //       '/sw-test/gallery/bountyHunters.jpg',
-  //       '/sw-test/gallery/myLittleVader.jpg',
-  //       '/sw-test/gallery/snowTroopers.jpg'
-  //     ]);
-  //   })
-  // );
+  event.waitUntil(
+    caches.open('v1').then(function(cache) {
+      return cache.addAll([
+        // '/sw-test/',
+        // '/sw-test/index.html',
+        // '/sw-test/style.css',
+        // '/sw-test/app.js',
+        // '/sw-test/image-list.js',
+        // '/sw-test/star-wars-logo.jpg',
+        // '/sw-test/gallery/bountyHunters.jpg',
+        './gallery/myLittleVader.jpg',
+        // '/sw-test/gallery/snowTroopers.jpg'
+      ]);
+    })
+  );
   console.log('sw is installed');
 });
 
@@ -26,8 +26,6 @@ self.addEventListener('activate', function (event) {
   }
   console.log('sw is activated');
 });
-
-// let firstCachedImage;
 
 self.addEventListener('fetch', function(event) {
   const urlsForCacheRegExp = new RegExp('/gallery/', 'g');
@@ -43,19 +41,20 @@ self.addEventListener('fetch', function(event) {
     // but in case of success response will have value
     if (response !== undefined) {
       console.log(`cache ${event.request.url}`);
-      // if (firstCachedImage) {
-      //   console.log(`retrun replacement for ${event.request.url}`);
-      //   return caches.match(firstCachedImage);
-      // }
 
-      // return response;
       const replacement = event.request.url
         .split('/')
         .slice(0,-2)
-        .concat('gallery/bountyHunters.jpg')
+        .concat('gallery/myLittleVader.jpg')
         .join('/');
       
-      return caches.match(replacement);
+      return caches.match(replacement)
+        .then(function (responseReplacement) {
+          if (!responseReplacement) {
+            console.log('have cache, but not have replacement');
+          }
+          return responseReplacement || response;
+        });
     } else {
       console.log(`fetch try: ${event.request.url}`);
       return fetch(event.request).then(function (response) {
@@ -69,9 +68,10 @@ self.addEventListener('fetch', function(event) {
         });
         // firstCachedImage = event.request.url;
         return response;
-      }).catch(function () {
-        return caches.match('gallery/myLittleVader.jpg');
       });
+      // .catch(function () {
+      //   return caches.match('gallery/myLittleVader.jpg');
+      // });
     }
   }));
 });
