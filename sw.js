@@ -36,18 +36,18 @@ self.addEventListener('fetch', function(event) {
 
   console.log(`request ${event.request.url}`);
 
+  const replacement = event.request.url
+  .split('/')
+  .slice(0,-2)
+  .concat('gallery/myLittleVader.jpg')
+  .join('/');
+
   event.respondWith(caches.match(event.request).then(function(response) {
     // caches.match() always resolves
     // but in case of success response will have value
     if (response !== undefined) {
       console.log(`cache ${event.request.url}`);
 
-      const replacement = event.request.url
-        .split('/')
-        .slice(0,-2)
-        .concat('gallery/myLittleVader.jpg')
-        .join('/');
-      
       return caches.match(replacement)
         .then(function (responseReplacement) {
           if (!responseReplacement) {
@@ -66,8 +66,15 @@ self.addEventListener('fetch', function(event) {
         caches.open('v1').then(function (cache) {
           cache.put(event.request, responseClone);
         });
-        // firstCachedImage = event.request.url;
-        return response;
+
+        // return response;
+        return caches.match(replacement)
+        .then(function (responseReplacement) {
+          if (!responseReplacement) {
+            console.log('have fetched, but not have replacement');
+          }
+          return responseReplacement || response;
+        });
       });
       // .catch(function () {
       //   return caches.match('gallery/myLittleVader.jpg');
