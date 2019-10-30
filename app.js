@@ -19,7 +19,7 @@ if ('serviceWorker' in navigator) {
     if (serviceWorker) {
       // logState(serviceWorker.state);
       serviceWorker.addEventListener('statechange', function (e) {
-          logState('serviceWorker statechange'  +e.target.state);
+          console.log('serviceWorker statechange: ' + e.target.state);
       });
     }
   }).catch(function(error) {
