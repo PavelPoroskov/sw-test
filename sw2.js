@@ -18,13 +18,15 @@ self.addEventListener('install', function(event) {
 });
 
 self.addEventListener('activate', function (event) {
-  // emulate safary
-  // // Safary don't support clients.claim()
-  // try {
-  //   event.waitUntil(self.clients.claim());
-  // // eslint-disable-next-line no-empty
-  // } catch (err) {
-  // }
+  // to emulate safary
+  // Safary don't support clients.claim()
+  try {
+    event.waitUntil(self.clients.claim());
+    console.log('clients.claim() is IN THIS browser');
+  // eslint-disable-next-line no-empty
+  } catch (err) {
+    console.log('clients.claim() is NOT IN THIS browser');
+  }
   console.log('from SW/activate: is activated');
 });
 
