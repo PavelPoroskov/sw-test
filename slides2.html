@@ -22,7 +22,7 @@
 
         (async function () {
           try {
-            var registration = await navigator.serviceWorker.register('/sw2.js');
+            var registration = await navigator.serviceWorker.register('./sw2.js');
 
             if (!registration.active) {
               // we need to reload page
@@ -40,7 +40,6 @@
                 // // (if we don't block loading images until service-worker ready)
                 // // (if we need to process images loaded until service-worker ready)
                 document.location.reload();
-
               }
             }
           } catch (err) {
