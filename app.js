@@ -47,6 +47,8 @@ if ('serviceWorker' in navigator) {
   };
 }
 
+
+
 // // function for loading each image via XHR
 
 // function imgLoad(imgJSON) {
